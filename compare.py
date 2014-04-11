@@ -6,6 +6,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from utils import Storage
+table_sql = ''
 
 
 def readDBInfo(db_cfg):
@@ -20,6 +21,14 @@ def readDBInfo(db_cfg):
     return dic
 
 
+def readSQL():
+    global table_sql
+    config = ConfigParser.ConfigParser()
+    with open('db.ini', 'r') as cfg_file:
+        config.readfp(cfg_file)
+        table_sql = config.get('table_sql', 'and')
+
+
 def getConnect(db_cfg):
     connect = db.database(port=5432, host=db_cfg['ip'], dbn='postgres', db=db_cfg['db'], user=db_cfg['user'], pw=db_cfg['password'])
     return connect
@@ -27,7 +36,8 @@ def getConnect(db_cfg):
 
 def getTableList(cfg, connect):
     l = []
-    sql = "select tablename from pg_tables where tableowner='%s'" % cfg['user']
+    sql = "select tablename from pg_tables where tableowner='%s' " % cfg['user']
+    sql += table_sql
     for i in connect.query(sql):
         l.append(i.tablename)
     return l
@@ -44,6 +54,7 @@ def getTableColum(table_name, connect):
 if __name__ == '__main__':
     cfg1 = readDBInfo('db1')
     cfg2 = readDBInfo('db2')
+    readSQL()
     connect1 = getConnect(cfg1)
     connect2 = getConnect(cfg2)
     #for i in c1.query(sql):
@@ -63,11 +74,13 @@ if __name__ == '__main__':
         else:
             just2.append(i)
 
+    print ''
     print 'h2. 只有%s存在以下表' % cfg1.get('ip')
     print ''
     for i in just1:
         print '|' + i + '|'
 
+    print ''
     print 'h2. 只有%s存在以下表' % cfg2.get('ip')
     print ''
     for i in just2:
@@ -89,12 +102,3 @@ if __name__ == '__main__':
         if len(just_colum2) != 0:
             for i in just_colum2:
                 print '|%s|%s|%s|%s|' % (table_name, cfg2.get('ip'), i.name, i.type)
-
-    #s = Storage()
-    #s.type = 'text'
-    #s.name = 'ip'
-    #s = dict(s)
-    #l = [s]
-    #base_mons = getTableColum('base_mon', connect1)
-    #base_mons = dict(base_mons)
-    #print set(l) ^ set(base_mons)
