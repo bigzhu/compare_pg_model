@@ -68,11 +68,6 @@ if __name__ == '__main__':
 
     diff_tables = just1 + just2
     all_have_tables = [x for x in tables1 if x not in diff_tables]
-    for i in diff_tables:
-        if i in tables1:
-            just1.append(i)
-        else:
-            just2.append(i)
 
     print ''
     print 'h2. 只有%s存在以下表' % cfg1.get('ip')
