@@ -63,30 +63,32 @@ if __name__ == '__main__':
         else:
             just2.append(i)
 
-    print '只有%s存在以下表:' % cfg1.get('ip')
+    print 'h2. 只有%s存在以下表' % cfg1.get('ip')
+    print ''
     for i in just1:
-        print i
+        print '|' + i + '|'
 
+    print 'h2. 只有%s存在以下表' % cfg2.get('ip')
     print ''
-    print ''
-    print '只有%s存在以下表:' % cfg2.get('ip')
     for i in just2:
-        print i
+        print '|' + i + '|'
 
     #比较表字段
+    print ''
+    print 'h2. 表字段差异'
+    print ''
+    print '|_. table_name|_. 数据库|_. 字段名|_. 字段类型|'
     for table_name in all_have_tables:
         table_colum1 = getTableColum(table_name, connect1)
         table_colum2 = getTableColum(table_name, connect2)
         just_colum1 = [x for x in table_colum1 if x not in table_colum2]
         just_colum2 = [x for x in table_colum2 if x not in table_colum1]
         if len(just_colum1) != 0:
-            print 'db %s 表 %s 独有:' % (cfg1.get('ip'), table_name)
             for i in just_colum1:
-                print 'type:%s' % i.type, 'name:%s' % i.name
+                print '|%s|%s|%s|%s|' % (table_name, cfg1.get('ip'), i.name, i.type)
         if len(just_colum2) != 0:
-            print 'db %s 表 %s 独有:' % (cfg2.get('ip'), table_name)
             for i in just_colum2:
-                print 'type:%s' % i.type, 'name:%s' % i.name
+                print '|%s|%s|%s|%s|' % (table_name, cfg2.get('ip'), i.name, i.type)
 
     #s = Storage()
     #s.type = 'text'
